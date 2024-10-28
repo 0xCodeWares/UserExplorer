@@ -14,9 +14,10 @@ import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem" // @demo remove-current-line
 import type {
   ApiConfig,
-  ApiFeedResponse, // @demo remove-current-line
+  PostsDetailsResponse,
+  UserDetailsResponse, // @demo remove-current-line
 } from "./api.types"
-import type { EpisodeSnapshotIn } from "../../models/Episode" // @demo remove-current-line
+import { PostsSnapshotIn, UserSnapshotIn } from "@/models"
 
 /**
  * Configuring the apisauce instance.
@@ -48,14 +49,10 @@ export class Api {
     })
   }
 
-  // @demo remove-block-start
-  /**
-   * Gets a list of recent React Native Radio episodes.
-   */
-  async getEpisodes(): Promise<{ kind: "ok"; episodes: EpisodeSnapshotIn[] } | GeneralApiProblem> {
+  async getUserList(): Promise<{ kind: "ok"; users: UserSnapshotIn[] } | GeneralApiProblem> {
     // make the api call
-    const response: ApiResponse<ApiFeedResponse> = await this.apisauce.get(
-      `api.json?rss_url=https%3A%2F%2Ffeeds.simplecast.com%2FhEI_f9Dx`,
+    const response: ApiResponse<UserDetailsResponse> = await this.apisauce.get(
+      `/users`,
     )
 
     // the typical ways to die when calling an api
@@ -69,12 +66,12 @@ export class Api {
       const rawData = response.data
 
       // This is where we transform the data into the shape we expect for our MST model.
-      const episodes: EpisodeSnapshotIn[] =
-        rawData?.items.map((raw) => ({
+      const users: UserSnapshotIn[] =
+        rawData?.users.map((raw) => ({
           ...raw,
         })) ?? []
 
-      return { kind: "ok", episodes }
+      return { kind: "ok", users }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
@@ -82,7 +79,39 @@ export class Api {
       return { kind: "bad-data" }
     }
   }
-  // @demo remove-block-end
+  
+  
+  async getUserPosts(userId:number): Promise<{ kind: "ok"; posts: PostsSnapshotIn[] } | GeneralApiProblem> {
+    // make the api call
+    console.log(userId,"userid")
+    const response: ApiResponse<PostsDetailsResponse> = await this.apisauce.get(
+      `/users/${userId}/posts`,
+    )
+
+    // the typical ways to die when calling an api
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    // transform the data into the format we are expecting
+    try {
+      const rawData = response.data
+
+      // This is where we transform the data into the shape we expect for our MST model.
+      const posts: PostsSnapshotIn[] =
+        rawData?.posts.map((raw) => ({
+          ...raw,
+        })) ?? []
+
+      return { kind: "ok", posts }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
 }
 
 // Singleton instance of the API for convenience
