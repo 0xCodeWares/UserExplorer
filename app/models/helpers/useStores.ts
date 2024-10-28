@@ -58,8 +58,8 @@ export const useInitialRootStore = (callback?: () => void | Promise<void>) => {
     let _unsubscribe: () => void | undefined
     ;(async () => {
       // set up the RootStore (returns the state restored from AsyncStorage)
-      const { unsubscribe } = await setupRootStore(rootStore)
-      _unsubscribe = unsubscribe
+      // const { unsubscribe } = await setupRootStore(rootStore)
+      // _unsubscribe = unsubscribe
 
       // reactotron integration with the MST root store (DEV only)
       if (__DEV__) {
