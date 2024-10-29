@@ -101,7 +101,7 @@ Contains User and Posts model, UserPostsStore and UserStore, RootStore.
 We use `react-navigation` navigators for navigation. The main navigator is a stack navigator(AppStack) with two screens 1. UserListScreen with name UserList and 2. PostScreen with name Post. 
 
 **screens**
-Contains the two screens icluded in AppStack. 
+Contains the two screens included in AppStack. 
 1. UserListScreen - 1.Contains a flatlist for optimized infinite scrolling with renderItem being the default card component of ignite boilerplate code
                     2.UserListed is fetched into UserStore inside UseEffect with UserStore as dependency.
                     3.Contains two functions 1.loadNextPage - increments currentPage by one until maxPage for pagination 
