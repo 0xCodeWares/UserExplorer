@@ -32,7 +32,7 @@ import { ComponentProps } from "react"
  */
 export type AppStackParamList = {
   UserList: undefined,
-  Post:{userId:number}
+  Post:{userId:number, userName:string}
 }
 
 /**

@@ -5,7 +5,7 @@ import { AppStackScreenProps } from "@/navigators"
 import { Button, ButtonAccessoryProps, Card, EmptyState, Icon, Screen, Text } from "@/components"
 // import { useNavigation } from "@react-navigation/native"
 import { User, useStores, UserModel, Posts } from "@/models" // @mst remove-current-line
-import { $styles, ThemedStyle } from "@/theme"
+import { $styles, spacing, ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/utils/useAppTheme"
 import Animated, { Extrapolation, interpolate, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 import { isRTL, translate } from "@/i18n"
@@ -16,7 +16,7 @@ interface PostScreenProps extends AppStackScreenProps<"Post"> { }
 const ICON_SIZE = 14
 const PAGE_SIZE = 8
 
-export const PostScreen: FC<PostScreenProps> = observer(function PostScreen({navigation, route}) {
+export const PostScreen: FC<PostScreenProps> = observer(function PostScreen({ navigation, route }) {
 
   const { postsStore } = useStores()
   const { themed } = useAppTheme()
@@ -25,10 +25,10 @@ export const PostScreen: FC<PostScreenProps> = observer(function PostScreen({nav
   const [paginatedData, setPaginatedData] = useState<typeof postsStore.postsList>()
   const [isLoading, setIsLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const maxPage = Math.ceil(postsStore.postsList.length / PAGE_SIZE)
 
   const loadNextPage = () => {
     setIsLoading(true)
-    const maxPage = Math.ceil(postsStore.postsList.length / PAGE_SIZE)
     if (currentPage < maxPage - 1) {
       setCurrentPage(currentPage + 1)
     }
@@ -45,7 +45,7 @@ export const PostScreen: FC<PostScreenProps> = observer(function PostScreen({nav
 
   }
 
-  
+
   useEffect(() => {
     ; (async function load() {
       setRefreshing(true)
@@ -72,10 +72,10 @@ export const PostScreen: FC<PostScreenProps> = observer(function PostScreen({nav
     readPaginatedData()
   }, [currentPage, postsStore.postsList])
 
-console.log(postsStore.postsList, "pos")
+  console.log(postsStore.postsList, "pos")
   return (
     <Screen style={$root} preset="fixed" safeAreaEdges={["top"]} >
-      <Text style={$page} text={"Page: " + (currentPage + 1).toString()} />
+      <Text style={$page} text={"Page: " + (currentPage + 1).toString()+" of "+maxPage} />
       <FlatList
         data={paginatedData}
         keyExtractor={item => item.id.toString()}
@@ -107,8 +107,8 @@ console.log(postsStore.postsList, "pos")
 
         ListHeaderComponent={
           <View style={themed($heading)}>
-            <Icon icon="back" style={{marginRight:15, marginLeft:5}} onPress={()=>navigation.goBack()}/>
-            <Text preset="heading" text="UserPosts" />
+            <Icon icon="back" style={{ marginRight: 15, marginLeft: 5 }} onPress={() => navigation.goBack()} />
+            <Text preset="heading" text= {"Posts by " +route.params.userName}/>
           </View>
         }
         ListFooterComponent={
@@ -150,13 +150,39 @@ const UserCard = observer(function UserCard({
           >
             {post.title}
           </Text>
-          
+
         </View>
       }
       content={`${post.body} - ${post.body}`}
       FooterComponent={
         <View style={[$styles.row, themed($metadata)]}>
-          <Icon icon=""/>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: 'center', marginRight:spacing.md}}>
+            <Icon icon="view" size={18}/>
+            <Text
+              style={{marginLeft:spacing.xs}}
+              size="sm"
+            >
+              {post.views}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: 'center' , marginRight:spacing.md}}>
+            <Icon icon="like" size={18}/>
+            <Text
+              style={{marginLeft:spacing.xs}}
+              size="sm"
+            >
+              {post.reactions.likes}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: 'center' }}>
+            <Icon icon="unlike" size={18}/>
+            <Text
+              style={{marginLeft:spacing.xs}}
+              size="sm"
+            >
+              {post.reactions.dislikes}
+            </Text>
+          </View>
         </View>
       }
     />
@@ -209,7 +235,7 @@ const $emptyStateImage: ImageStyle = {
 }
 const $heading: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginBottom: spacing.md,
-  flexDirection:"row",
-  alignItems:"center"
+  flexDirection: "row",
+  alignItems: "center"
 })
 // #endregion

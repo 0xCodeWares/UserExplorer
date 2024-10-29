@@ -30,20 +30,23 @@ export const UserListScreen: FC<UserListScreenProps> = observer(function UserLis
   const [refreshing, setRefreshing] = useState(false)
   const maxPage = Math.ceil(userStore.usersList.length / PAGE_SIZE)
 
-  const loadNextPage = () => {
+  const loadNextPage = async() => {
     setIsLoading(true)
     if (currentPage < maxPage - 1) {
       setCurrentPage(currentPage + 1)
     }
+    await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false)
 
   }
-  const loadPreviousPage = () => {
+  const loadPreviousPage = async() => {
     setIsLoading(true)
 
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1)
     }
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     setIsLoading(false)
 
   }
@@ -91,7 +94,7 @@ export const UserListScreen: FC<UserListScreenProps> = observer(function UserLis
 
     const handlePressCard = () => {
       // openLinkInBrowser(episode.enclosure.link)
-      navigation.navigate("Post", { userId: user.id })
+      navigation.navigate("Post", { userId: user.id, userName:user.firstName })
     }
 
     return (
@@ -184,15 +187,19 @@ export const UserListScreen: FC<UserListScreenProps> = observer(function UserLis
 
         ListHeaderComponent={
           <View style={themed($heading)}>
-            <Text preset="heading" text="UserList" />
-
+            <Text preset="heading" text="Users" />
+           
           </View>
         }
         ListFooterComponent={
+          
+          <View style={themed($heading)}>
+          {
           isLoading ? (
             <ActivityIndicator />
-          ) : null
-
+          ) : null}
+         
+        </View>
         }
       />
     </Screen>
