@@ -1,33 +1,30 @@
-# Welcome to your new ignited app!
+# Welcome to User Explorer!
 
-[![CircleCI](https://circleci.com/gh/infinitered/ignite.svg?style=svg)](https://circleci.com/gh/infinitered/ignite)
+## An app made to browse a list of users and see posts made by them
 
-## The latest and greatest boilerplate for Infinite Red opinions
-
-This is the boilerplate that [Infinite Red](https://infinite.red) uses as a way to test bleeding-edge changes to our React Native stack.
-
-Currently includes:
+The app currently makes use of:
 
 - React Native
 - React Navigation
 - MobX State Tree
 - TypeScript
-- And more!
 
 ## Quick Start
 
-The Ignite boilerplate project's structure will look similar to this:
+The User Explorer project's structure bootstrapped with Ignite boilerplate  will look similar to this:
 
 ```
-ignite-project
+UserExplorer
 ├── app
 │   ├── components
 │   ├── config
+│   ├── devtools
 │   ├── i18n
 │   ├── models
 │   ├── navigators
 │   ├── screens
 │   ├── services
+│       ├── api
 │   ├── theme
 │   ├── utils
 │   └── app.tsx
@@ -69,8 +66,6 @@ ignite-project
 
 ### ./app directory
 
-Included in an Ignite boilerplate project is the `app` directory. This is a directory you would normally have to create when using vanilla React Native.
-
 The inside of the `app` directory looks similar to the following:
 
 ```
@@ -88,34 +83,49 @@ app
 ```
 
 **components**
-This is where your reusable components live which help you build your screens.
+Contains default reusable components of the ignite boilerplate.
 
 **i18n**
-This is where your translations will live if you are using `react-native-i18n`.
+Contains default translations of the ignite boilerplate using `react-native-i18n`.
 
 **models**
-This is where your app's models will live. Each model has a directory which will contain the `mobx-state-tree` model file, test file, and any other supporting files like actions, types, etc.
+Contains User and Posts model, UserPostsStore and UserStore, RootStore. 
+1. User model contains props for `mobx-state-tree` to read basic user data like id, firstName, lastName, age, email etc.
+2. Posts model contains props for `mobx-state-tree` to read basic details of post by a user like id, title, body, views etc.
+3. The UserStore contains   - fetchUsers() function for fetching the UserDetails from the Api getUserList() and store in the UserStore using `mobx-state-tree`
+                            - A getter function usersList() returns the userdetails from the store
+4. The UserPostsStore contains - fetchUserPosts(userId) : which has userId param for fetching Posts of that specific userId from getUserPosts() and store it in UserPostsStore
+                               - A getter function postsList() returns the posts from the store
 
 **navigators**
-This is where your `react-navigation` navigators will live.
+We use `react-navigation` navigators for navigation. The main navigator is a stack navigator(AppStack) with two screens 1. UserListScreen with name UserList and 2. PostScreen with name Post. 
 
 **screens**
-This is where your screen components will live. A screen is a React component which will take up the entire screen and be part of the navigation hierarchy. Each screen will have a directory containing the `.tsx` file, along with any assets or other helper files.
+Contains the two screens included in AppStack. 
+1. UserListScreen - 1.Contains a flatlist for optimized infinite scrolling with renderItem being the default card component of ignite boilerplate code
+                    2.UserListed is fetched into UserStore inside UseEffect with UserStore as dependency.
+                    3.Contains two functions 1.loadNextPage - increments currentPage by one until maxPage for pagination 
+                                             2.loadPreviousPage - decrements   currentPage by one before 0.
+                    4.readPaginatedData function splices the total list to only pageSize number of items based on currentPage.
+                    5.handlePressCard - for navigating to PostListScreen with userId as route parameter.
+3. PostScreen     - 1. Above Pagination techniques are reused in for optimized viewing of posts list
 
 **services**
-Any services that interface with the outside world will live here (think REST APIs, Push Notifications, etc.).
+The default Api class provided with ignite boilerplate is used. The default libraries apisauce and axios is used to fetch data. 
+Two async functions are declared 1.getUserList() - Fetches userList from the given api
+                                 2.getUserPosts() -  Fetches Posts with the userId recieved as parameter
 
 **theme**
-Here lives the theme for your application, including spacing, colors, and typography.
+Theme for the application, including spacing, colors, and typography.
 
 **utils**
-This is a great place to put miscellaneous helpers and utilities. Things like date helpers, formatters, etc. are often found here. However, it should only be used for things that are truly shared across your application. If a helper or utility is only used by a specific component or model, consider co-locating your helper with that component or model.
+miscellaneous helpers and utilities
 
-**app.tsx** This is the entry point to your app. This is where you will find the main App component which renders the rest of the application.
+**app.tsx** Entry point to the app
 
 ### ./assets directory
 
-This directory is designed to organize and store various assets, making it easy for you to manage and use them in your application. The assets are further categorized into subdirectories, including `icons` and `images`:
+This directory contains various assets. The assets are further categorized into subdirectories, including `icons` and `images`:
 
 ```
 assets
@@ -124,26 +134,10 @@ assets
 ```
 
 **icons**
-This is where your icon assets will live. These icons can be used for buttons, navigation elements, or any other UI components. The recommended format for icons is PNG, but other formats can be used as well.
-
-Ignite comes with a built-in `Icon` component. You can find detailed usage instructions in the [docs](https://github.com/infinitered/ignite/blob/master/docs/Components-Icon.md).
+Various icons and their paths are declared here.
 
 **images**
-This is where your images will live, such as background images, logos, or any other graphics. You can use various formats such as PNG, JPEG, or GIF for your images.
-
-Another valuable built-in component within Ignite is the `AutoImage` component. You can find detailed usage instructions in the [docs](https://github.com/infinitered/ignite/blob/master/docs/Components-AutoImage.md).
-
-How to use your `icon` or `image` assets:
-
-```
-import { Image } from 'react-native';
-
-const MyComponent = () => {
-  return (
-    <Image source={require('../assets/images/my_image.png')} />
-  );
-};
-```
+Background images, logos, or any other graphics.
 
 ### ./ignite directory
 
@@ -153,12 +147,3 @@ The `ignite` directory stores all things Ignite, including CLI and boilerplate i
 
 This directory will hold your Jest configs and mocks.
 
-## Running Maestro end-to-end tests
-
-Follow our [Maestro Setup](https://ignitecookbook.com/docs/recipes/MaestroSetup) recipe from the [Ignite Cookbook](https://ignitecookbook.com/)!
-
-## Previous Boilerplates
-
-- [2018 aka Bowser](https://github.com/infinitered/ignite-bowser)
-- [2017 aka Andross](https://github.com/infinitered/ignite-andross)
-- [2016 aka Ignite 1.0](https://github.com/infinitered/ignite-ir-boilerplate-2016)

@@ -110,6 +110,9 @@ export const iconRegistry = {
   slack: require("../../assets/icons/demo/slack.png"), // @demo remove-current-line
   view: require("../../assets/icons/view.png"),
   x: require("../../assets/icons/x.png"),
+  like: require("../../assets/icons/thumbup.png"),
+  unlike: require("../../assets/icons/thumbdown.png"),
+
 }
 
 const $imageStyleBase: ImageStyle = {
