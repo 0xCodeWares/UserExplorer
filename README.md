@@ -11,7 +11,7 @@ The app currently makes use of:
 
 ## Quick Start
 
-The User Explorer project's structure App bootstrapped with Ignite boilerplate  will look similar to this:
+The User Explorer project's structure bootstrapped with Ignite boilerplate  will look similar to this:
 
 ```
 UserExplorer
